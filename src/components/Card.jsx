@@ -8,7 +8,7 @@ function Card({card, handle}){
 
   return (
     <li className="gallery__item">
-      <img className="gallery__image" alt="картинка места" src={card.link} onClick={handleClick} />
+      <img className="gallery__image" alt={card.name} src={card.link} onClick={handleClick} />
       <div className="gallery__description">
         <h2 className="gallery__place">{card.name}</h2>
         <div className="gallery__mark">

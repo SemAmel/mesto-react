@@ -42,7 +42,7 @@ function Main(props) {
         <ul className="gallery__items">
 
           {cards.map((card) => 
-            <Card card={card} key={card._id} handle={props.onCardClick} />
+            (<Card card={card} key={card._id} handle={props.onCardClick} />)
           )}
 
         </ul>

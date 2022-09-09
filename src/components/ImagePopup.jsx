@@ -1,17 +1,13 @@
 
 
-function ImagePopup(props){
-
-  const handleClose = () => {
-    props.onClose();
-  }
+function ImagePopup({card, isOpen, onClose}){
 
   return (
-    <div className={`popup popup_type_enlargement ${props.isOpen && 'popup_opened'}`} onClick={handleClose}>
+    <div className={`popup popup_type_enlargement ${isOpen && 'popup_opened'}`} onClick={onClose}>
       <div className="popup__field" onClick={(e) => e.stopPropagation()}>
-        <img className="popup__big-image" alt="большая картинка места" src={props.card.link} />
-        <h3 className="popup__place-name">props.card.name</h3>
-        <button className="popup__close-button" type="button" onClick={handleClose}></button>
+        <img className="popup__big-image" alt="большая картинка места" src={card.link} />
+        <h3 className="popup__place-name">{card.name}</h3>
+        <button className="popup__close-button" type="button" onClick={onClose}></button>
       </div>
     </div>
   );
