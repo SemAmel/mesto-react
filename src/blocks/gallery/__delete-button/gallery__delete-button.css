@@ -1,4 +1,4 @@
-.gallery__trash{
+.gallery__delete-button{
   width: 18px;
   height: 19px;
   position: absolute;
@@ -11,6 +11,6 @@
   transition: opacity 1s;
 }
 
-.gallery__trash:hover {
+.gallery__delete-button:hover {
   opacity: .5;
 }
