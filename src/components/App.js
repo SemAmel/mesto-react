@@ -11,11 +11,14 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 
 function App() {
-
+  // Все состояния открытия попапов
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
+  // Состояние загрузки, ожидание ответа от сервера
+  const [isLoading, setIsLoading] = React.useState(false);
+ 
   
   const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
@@ -45,25 +48,33 @@ function App() {
   }
 
   const handleUpdateUser = ({name, about}) => {
+    setIsLoading(true);
     api.editUserInfo(name, about)
       .then((res) => {
         setCurrentUser(res);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(`${err}`); 
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    closeAllPopups();
   }
 
   const handleUpdateAvatar = ({link}) => {
+    setIsLoading(true);
     api.editUserAvatar(link)
       .then((res) => {
         setCurrentUser(res);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(`${err}`); 
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    closeAllPopups();
   }
 
   const handleCardLike = (card) => {
@@ -71,7 +82,7 @@ function App() {
     if (isLiked){
       api.deleteLikeCard(card._id)
         .then((newCard) => {
-        setCards((state) => state.map((item) => item._id === card._id ? newCard : item));
+          setCards((state) => state.map((item) => item._id === card._id ? newCard : item));
         })
         .catch((err) => {
           console.log(`${err}`); 
@@ -98,15 +109,35 @@ function App() {
   }
 
   const handleAddPlaceSubmit = ({name, link}) => {
+    setIsLoading(true);
     api.addNewCard(name, link)
       .then((newCard) => {
-        setCards([newCard, ...cards]); 
+        setCards([newCard, ...cards]);
+        closeAllPopups();
       })
       .catch((err) => {
         console.log(`${err}`); 
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    closeAllPopups();
   }
+
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isImagePopupOpen;
+
+  React.useEffect(() => {
+    function closeByEscape(evt) {
+      if(evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if(isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen]) 
 
   React.useEffect(() => {
     Promise.all([api.getInitialUserInfo(), api.getInitialCards()])
@@ -139,11 +170,11 @@ function App() {
 
       </div>
 
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} /> 
+      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isLoading={isLoading} /> 
 
-      <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+      <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} isLoading={isLoading} />
 
-      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isLoading={isLoading} />
 
       <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
 

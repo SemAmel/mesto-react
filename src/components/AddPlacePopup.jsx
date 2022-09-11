@@ -1,15 +1,24 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
 
-const AddPlacePopup = ({isOpen, onClose, onAddPlace}) => {
-  const nameRef = React.useRef();
-  const linkRef = React.useRef();
+const AddPlacePopup = ({isOpen, onClose, onAddPlace, isLoading}) => {
+  // const nameRef = React.useRef();
+  // const linkRef = React.useRef();
+  const [name, setName] = React.useState('');
+  const [link, setLink] = React.useState('');
+
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  }
+  const handleLinkChange = (e) => {
+    setLink(e.target.value);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onAddPlace({
-      name: nameRef.current.value,
-      link: linkRef.current.value,
+      name,
+      link,
     });
   }
 
@@ -18,9 +27,11 @@ const AddPlacePopup = ({isOpen, onClose, onAddPlace}) => {
     title={'Новое место'} 
     name={'add-item'}
     buttonText={'Создать'}
+    loadingText={'Создание...'}
     isOpen={isOpen} 
     onClose={onClose}
-    onSubmit={handleSubmit}>
+    onSubmit={handleSubmit}
+    isLoading={isLoading}>
       <input 
       className="popup__input popup__input_type_place-name" 
       id="input-place-name" 
@@ -29,7 +40,8 @@ const AddPlacePopup = ({isOpen, onClose, onAddPlace}) => {
       placeholder="Название" 
       minLength="2" 
       maxLength="30"
-      ref={nameRef}
+      value={name || ''}
+      onChange={handleNameChange}
       required />
       <span className="input-place-name-error popup__input-error"></span>
       <input 
@@ -38,7 +50,8 @@ const AddPlacePopup = ({isOpen, onClose, onAddPlace}) => {
       type="url" 
       name="link" 
       placeholder="Ссылка на картинку" 
-      ref={linkRef}
+      value={link || ''}
+      onChange={handleLinkChange}
       required />
       <span className="input-link-error popup__input-error"></span>
     </PopupWithForm>
